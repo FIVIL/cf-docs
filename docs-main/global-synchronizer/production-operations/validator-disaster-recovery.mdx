@@ -3,7 +3,7 @@ title: "Validator Disaster Recovery"
 description: "Disaster recovery and restore procedures for validator nodes"
 ---
 
-import ExternalSpliceMainSpliceRstCodeDocsSrcValidatorOperatorValidatorDisasterRecoveryBash137 from "/snippets/external/splice/main/splice-rst-code-docs-src-validator-operator-validator-disaster-recovery-bash-137.mdx";
+import ExternalSpliceMainSpliceRstCodeDocsSrcValidatorOperatorValidatorDisasterRecoveryBash140 from "/snippets/external/splice/main/splice-rst-code-docs-src-validator-operator-validator-disaster-recovery-bash-140.mdx";
 import ExternalSpliceMainSpliceRstLiteralMarkerAppsAppSrcPackExamplesSvHelmStandaloneValidatorValuesParticipantBootstrapMigrateToNewParticipantStart from "/snippets/external/splice/main/splice-literal-marker-apps-app-src-pack-examples-sv-helm-standalone-validator-values-participant-bootstrap-migrate-to-new-participant-start.mdx";
 import ExternalSpliceMainSpliceRstCodeDocsSrcValidatorOperatorValidatorDisasterRecoveryYaml185 from "/snippets/external/splice/main/splice-rst-code-docs-src-validator-operator-validator-disaster-recovery-yaml-185.mdx";
 import ExternalSpliceMainSpliceRstLiteralFullAppsAppSrcPackExamplesRecoveryManualIdentitiesDump from "/snippets/external/splice/main/splice-literal-full-apps-app-src-pack-examples-recovery-manual-identities-dump.mdx";
@@ -11,6 +11,14 @@ import ExternalSpliceMainSpliceRstLiteralFullAppsAppSrcPackExamplesRecoveryManua
 import ExternalSpliceMainSpliceRstCodeDocsSrcValidatorOperatorValidatorDisasterRecoveryNone299 from "/snippets/external/splice/main/splice-rst-code-docs-src-validator-operator-validator-disaster-recovery-none-299.mdx";
 import ExternalSpliceMainSpliceRstCodeDocsSrcValidatorOperatorValidatorDisasterRecoveryNone314 from "/snippets/external/splice/main/splice-rst-code-docs-src-validator-operator-validator-disaster-recovery-none-314.mdx";
 
+import ExternalSpliceMainSpliceRstCodeDocsSrcValidatorOperatorValidatorDisasterRecoveryNone264 from "/snippets/external/splice/main/splice-rst-code-docs-src-validator-operator-validator-disaster-recovery-none-264.mdx";
+import ExternalSpliceMainSpliceRstCodeDocsSrcValidatorOperatorValidatorDisasterRecoveryNone355 from "/snippets/external/splice/main/splice-rst-code-docs-src-validator-operator-validator-disaster-recovery-none-355.mdx";
+import ExternalSpliceMainSpliceRstCodeDocsSrcValidatorOperatorValidatorDisasterRecoveryNone397 from "/snippets/external/splice/main/splice-rst-code-docs-src-validator-operator-validator-disaster-recovery-none-397.mdx";
+import ExternalSpliceMainSpliceRstCodeDocsSrcValidatorOperatorValidatorDisasterRecoveryNone419 from "/snippets/external/splice/main/splice-rst-code-docs-src-validator-operator-validator-disaster-recovery-none-419.mdx";
+import ExternalSpliceMainSpliceRstCodeDocsSrcValidatorOperatorValidatorDisasterRecoveryNone451 from "/snippets/external/splice/main/splice-rst-code-docs-src-validator-operator-validator-disaster-recovery-none-451.mdx";
+
+import { NetworkVariables } from '/snippets/components/version.mdx';
+import { networkData } from '/snippets/generated/version-dashboard-data.mdx';
 import ExternalSpliceMainSpliceRstCodeDocsSrcValidatorOperatorValidatorDisasterRecoveryNone485 from "/snippets/external/splice/main/splice-rst-code-docs-src-validator-operator-validator-disaster-recovery-none-485.mdx";
 
 {/* COPIED_START source="splice:docs/src/validator_operator/validator_disaster_recovery.rst" hash="48572fc5" */}
@@ -79,7 +87,7 @@ To re-onboard a validator in a Kubernetes deployment and recover the balances of
 
 - Create a Kubernetes secret with the content of the identities backup file. Assuming you set the environment variable `PARTICIPANT_BOOTSTRAP_DUMP_FILE` to a backup file path, you can create the secret with the following command:
 
-<ExternalSpliceMainSpliceRstCodeDocsSrcValidatorOperatorValidatorDisasterRecoveryBash137 />
+<ExternalSpliceMainSpliceRstCodeDocsSrcValidatorOperatorValidatorDisasterRecoveryBash140 />
 
 - Uncomment the following lines in the `standalone-validator-values.yaml` file. This will specify a new participant ID for the validator. Replace `put-some-new-string-never-used-before` with a string that was never used before. Make sure to also adjust `nodeIdentifier` to match the same value.
 
@@ -317,103 +325,45 @@ We now need to sign and submit the topology transaction to host the external par
 
 To do so, first generate the topology transaction. Note that the instructions here assume that the party is only hosted on a single participant node. If you want to host it on multiple nodes, you will need to adjust this.
 
-```
-   those from the rejected ``OwnerToKeyMapping`` in your participant logs, and replace the
-   old participant ID with your actual old participant ID:
-
-   .. code::
-
-      val keys = Seq("<signing-key-id-prefix>", "<encryption-key-id-prefix>").map(prefix =>
-        participant.keys.public.list().filter(_.publicKey.id.toProtoPrimitive.startsWith(prefix)).head.publicKey)
-
-      val oldParticipantId = ParticipantId.fromProtoPrimitive("<old-participant-id>", "participant").toOption.get
-      val otk = OwnerToKeyMapping(member = oldParticipantId, keys = NonEmpty.from(keys).get)
-      participant.topology.owner_to_key_mappings.propose(otk, force = ForceFlag.AlienMember)
+<ExternalSpliceMainSpliceRstCodeDocsSrcValidatorOperatorValidatorDisasterRecoveryNone355 />
 
 3. Start the validator app using your original identities dump configuration.
 
-.. _validator_recover_external_party:
-
 Recover the Coin balance of an external party
-+++++++++++++++++++++++++++++++++++++++++++++
 
 For a party relying on external signing, a similar procedure can be
 used to recover its coin balance in case the validator originally
 hosting it becomes unusable for whatever reason.
 
-.. warning:: The target validator that you use to host the party after
-             recovery **must** be a **completely new validator**. An existing validator
-             may brick completely due to some limitations around party
-             migrations and there is no way to recover from that at
-             this point. Recovering a validator from an identities backup does not classify
-             as a completely new validator here. You must setup it with a completely new identity
-             and a completely clean database.
-             This limitation is expected to be lifted in
-```
+<Warning>
+The target validator that you use to host the party after recovery **must** be a **completely new validator**. An existing validator may brick completely due to some limitations around party migrations and there is no way to recover from that at this point. Recovering a validator from an identities backup does not classify as a completely new validator here. You must setup it with a completely new identity and a completely clean database. This limitation is expected to be lifted in
+</Warning>
+
 We'll need the topology transaction and the definitions defined here later again. Either keep your Canton console open or save them.
 
 The topology transaction hash needs to be signed externally following the [documentation for external signing](/appdev/deep-dives/external-signing-onboarding#external-party-onboarding-transactions).
 
 After you signed it externally, you need to construct the signed topology transaction, sign it additionally through the participant and then submit it through the synchronizer.
 
-```
 it on multiple nodes, you will need to adjust this.
 
-.. code::
+<ExternalSpliceMainSpliceRstCodeDocsSrcValidatorOperatorValidatorDisasterRecoveryNone355 />
 
-   // replace YOUR_PARTY_ID by the ID of your external party
-   val partyId = PartyId.tryFromProtoPrimitive("YOUR_PARTY_ID")
-   val participantId = participant.id
-   val synchronizerId = participant.synchronizers.id_of("global")
-
-   // generate topology transaction
-   val partyToParticipant = PartyToParticipant.tryCreate(
-       partyId = partyId,
-       threshold = PositiveInt.one,
-       participants = Seq(
-         HostingParticipant(
-           participantId,
-           ParticipantPermission.Confirmation,
-         )
-```
 We can now check that the topology transaction got correctly applied and get the `validFrom` time:
 
-```
-   val topologyTransaction = participant.topology.transactions.generate(
-     Seq(
-       GenerateTransactions.Proposal(
-         partyToParticipant,
-         TopologyStoreId.Synchronizer(synchronizerId),
-       )
-     )
-   ).head
-
-   // Print out the hash that needs to be signed. Note that you need to sign
-   // the actual bytes the hex string represents not the hex string
-   topologyTransaction.hash.hash.toHexString
-
-We'll need the topology transaction and the definitions defined here later again. Either keep your Canton console open or save them.
-
-The topology transaction hash needs to be signed externally following the
-`documentation for external signing <https://docs.digitalasset.com/build/3.4/tutorials/app-dev/external_signing_onboarding.html#external-party-onboarding-transactions>`_.
+<ExternalSpliceMainSpliceRstCodeDocsSrcValidatorOperatorValidatorDisasterRecoveryNone419 />
 
 ```
 In this example, the validFrom time is `2025-05-14T10:19:33.534074Z`.
 
 We can now query CC Scan to get the active contract set (ACS) for a party and write it to the file `acs_snapshot`:
 
-```bash
-// Make sure to adjust YOUR_VALID_FROM to the time you got from the previous query and YOUR_PARY_ID
-curl -sSL --fail-with-body 'https://scan.sv-1.dev.global.canton.network.sync.global/api/scan/v0/acs/YOUR_PARTY_ID?record_time=YOUR_VALID_FROM' -H 'Content-Type: application/json' | jq -r .acs_snapshot | base64 -d > acs_snapshot
-```
+<ExternalSpliceMainSpliceRstCodeDocsSrcValidatorOperatorValidatorDisasterRecoveryParsedLiteral443 />
+
 Lastly, we can import the ACS:
 
-```
-   val topologyTxSignedByBoth = participant.topology.transactions.sign(
-     topologyTxSignedByParty,
-     TopologyStoreId.Synchronizer(synchronizerId),
-     signedBy = Seq(participantId.namespace.fingerprint)
-```
+<ExternalSpliceMainSpliceRstCodeDocsSrcValidatorOperatorValidatorDisasterRecoveryNone451 />
+
 The party is now hosted on the node and can participat in transactions. The last step is to setup the necessary contracts to allow the validator automation to renew transfer preapprovals and complete transfer commands. To do so, go through the same flow used for initial onboarding of the party, i.e., `/v0/admin/external-party/setup-proposal`, `/v0/admin/external-party/setup-proposal/prepare-accept` and `/v0/admin/external-party/setup-proposal/submit-accept`. For details refer to the docs for the validator external signing API.
 
 </Tab>
@@ -525,129 +475,8 @@ curl -sSL --fail-with-body 'https://scan.sv-1.test.global.canton.network.sync.gl
 ```
 Lastly, we can import the ACS:
 
-```
-   val topologyTxSignedByBoth = participant.topology.transactions.sign(
-     topologyTxSignedByParty,
-     TopologyStoreId.Synchronizer(synchronizerId),
-     signedBy = Seq(participantId.namespace.fingerprint)
-```
-The party is now hosted on the node and can participat in transactions. The last step is to setup the necessary contracts to allow the validator automation to renew transfer preapprovals and complete transfer commands. To do so, go through the same flow used for initial onboarding of the party, i.e., `/v0/admin/external-party/setup-proposal`, `/v0/admin/external-party/setup-proposal/prepare-accept` and `/v0/admin/external-party/setup-proposal/submit-accept`. For details refer to the docs for the validator external signing API.
+<ExternalSpliceMainSpliceRstCodeDocsSrcValidatorOperatorValidatorDisasterRecoveryNone451 />
 
-</Tab>
-
-<Tab title="MainNet (0.6.2)">
-
-For a party relying on external signing, a similar procedure can be used to recover its coin balance in case the validator originally hosting it becomes unusable for whatever reason.
-
-<Warning>
-The target validator that you use to host the party after recovery **must** be a **completely new validator**. An existing validator may brick completely due to some limitations around party migrations and there is no way to recover from that at this point. Recovering a validator from an identities backup does not classify as a completely new validator here. You must setup it with a completely new identity and a completely clean database. This limitation is expected to be lifted in the future.
-</Warning>
-
-First, setup a new validator following the standard standard validator deployment docs.
-
-Next, connect a Canton console to that new validator.
-
-We now need to sign and submit the topology transaction to host the external party on the new node and import the ACS for that party.
-
-To do so, first generate the topology transaction. Note that the instructions here assume that the party is only hosted on a single participant node. If you want to host it on multiple nodes, you will need to adjust this.
-
-```
-   those from the rejected ``OwnerToKeyMapping`` in your participant logs, and replace the
-   old participant ID with your actual old participant ID:
-
-   .. code::
-
-      val keys = Seq("<signing-key-id-prefix>", "<encryption-key-id-prefix>").map(prefix =>
-        participant.keys.public.list().filter(_.publicKey.id.toProtoPrimitive.startsWith(prefix)).head.publicKey)
-
-      val oldParticipantId = ParticipantId.fromProtoPrimitive("<old-participant-id>", "participant").toOption.get
-      val otk = OwnerToKeyMapping(member = oldParticipantId, keys = NonEmpty.from(keys).get)
-      participant.topology.owner_to_key_mappings.propose(otk, force = ForceFlag.AlienMember)
-
-3. Start the validator app using your original identities dump configuration.
-
-.. _validator_recover_external_party:
-
-Recover the Coin balance of an external party
-+++++++++++++++++++++++++++++++++++++++++++++
-
-For a party relying on external signing, a similar procedure can be
-used to recover its coin balance in case the validator originally
-hosting it becomes unusable for whatever reason.
-
-.. warning:: The target validator that you use to host the party after
-             recovery **must** be a **completely new validator**. An existing validator
-             may brick completely due to some limitations around party
-             migrations and there is no way to recover from that at
-             this point. Recovering a validator from an identities backup does not classify
-             as a completely new validator here. You must setup it with a completely new identity
-             and a completely clean database.
-             This limitation is expected to be lifted in
-```
-We'll need the topology transaction and the definitions defined here later again. Either keep your Canton console open or save them.
-
-The topology transaction hash needs to be signed externally following the [documentation for external signing](/appdev/deep-dives/external-signing-onboarding#external-party-onboarding-transactions).
-
-After you signed it externally, you need to construct the signed topology transaction, sign it additionally through the participant and then submit it through the synchronizer.
-
-```
-it on multiple nodes, you will need to adjust this.
-
-.. code::
-
-   // replace YOUR_PARTY_ID by the ID of your external party
-   val partyId = PartyId.tryFromProtoPrimitive("YOUR_PARTY_ID")
-   val participantId = participant.id
-   val synchronizerId = participant.synchronizers.id_of("global")
-
-   // generate topology transaction
-   val partyToParticipant = PartyToParticipant.tryCreate(
-       partyId = partyId,
-       threshold = PositiveInt.one,
-       participants = Seq(
-         HostingParticipant(
-           participantId,
-           ParticipantPermission.Confirmation,
-         )
-```
-We can now check that the topology transaction got correctly applied and get the `validFrom` time:
-
-```
-   val topologyTransaction = participant.topology.transactions.generate(
-     Seq(
-       GenerateTransactions.Proposal(
-         partyToParticipant,
-         TopologyStoreId.Synchronizer(synchronizerId),
-       )
-     )
-   ).head
-
-   // Print out the hash that needs to be signed. Note that you need to sign
-   // the actual bytes the hex string represents not the hex string
-   topologyTransaction.hash.hash.toHexString
-
-We'll need the topology transaction and the definitions defined here later again. Either keep your Canton console open or save them.
-
-The topology transaction hash needs to be signed externally following the
-`documentation for external signing <https://docs.digitalasset.com/build/3.4/tutorials/app-dev/external_signing_onboarding.html#external-party-onboarding-transactions>`_.
-
-```
-In this example, the validFrom time is `2025-05-14T10:19:33.534074Z`.
-
-We can now query CC Scan to get the active contract set (ACS) for a party and write it to the file `acs_snapshot`:
-
-```bash
-// Make sure to adjust YOUR_VALID_FROM to the time you got from the previous query and YOUR_PARY_ID
-curl -sSL --fail-with-body 'https://scan.sv-1.global.canton.network.sync.global/api/scan/v0/acs/YOUR_PARTY_ID?record_time=YOUR_VALID_FROM' -H 'Content-Type: application/json' | jq -r .acs_snapshot | base64 -d > acs_snapshot
-```
-Lastly, we can import the ACS:
-
-```
-   val topologyTxSignedByBoth = participant.topology.transactions.sign(
-     topologyTxSignedByParty,
-     TopologyStoreId.Synchronizer(synchronizerId),
-     signedBy = Seq(participantId.namespace.fingerprint)
-```
 The party is now hosted on the node and can participat in transactions. The last step is to setup the necessary contracts to allow the validator automation to renew transfer preapprovals and complete transfer commands. To do so, go through the same flow used for initial onboarding of the party, i.e., `/v0/admin/external-party/setup-proposal`, `/v0/admin/external-party/setup-proposal/prepare-accept` and `/v0/admin/external-party/setup-proposal/submit-accept`. For details refer to the docs for the validator external signing API.
 
 </Tab>
